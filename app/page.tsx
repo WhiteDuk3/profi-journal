@@ -1,14 +1,21 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Users, FileText, Upload, Unlock, Lock } from 'lucide-react';
 
-// Dummy data
+// Dummy data with proper types
 const stats = {
   journals: 45,
   authors: 1234,
   articles: 5678
 };
 
-const popularArticles = [
+const popularArticles: {
+  id: number;
+  title: string;
+  authors_detail: { name: string }[];
+  published_date: string;
+  views: number;
+  journal_name: string;
+}[] = [
   {
     id: 1,
     title: "Sun'iy intellektning tibbiyotdagi roli",
@@ -35,7 +42,14 @@ const popularArticles = [
   }
 ];
 
-const popularJournals = [
+const popularJournals: {
+  id: number;
+  name: string;
+  access_type: "open" | "closed";
+  description: string;
+  article_count: number;
+  cover_image: string | null;
+}[] = [
   {
     id: 1,
     name: "O‘zbekiston tibbiyot jurnali",
@@ -54,7 +68,13 @@ const popularJournals = [
   }
 ];
 
-const latestNews = [
+const latestNews: {
+  id: number;
+  title: string;
+  content: string;
+  image: string | null;
+  created_at: string;
+}[] = [
   {
     id: 1,
     title: "Yangi jurnal ochildi",
@@ -74,7 +94,7 @@ const latestNews = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero with search */}
+      {/* Hero */}
       <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 
@@ -141,7 +161,7 @@ export default function Home() {
               Ko'rish <ArrowRight className="ml-1 w-4 h-4" />
             </Link>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition transform hover:-translate-y-1">
+          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition transform hover:-y-1">
             <Lock className="w-10 h-10 text-gray-600 mb-3" />
             <h3 className="text-xl font-semibold mb-2">Yopiq maqolalar</h3>
             <p className="text-gray-600 mb-4">Faqat obuna bo'lgan yoki muallif ruxsat bergan foydalanuvchilar uchun.</p>
