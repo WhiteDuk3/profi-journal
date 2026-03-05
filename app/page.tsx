@@ -1,85 +1,80 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Users, FileText, Upload, Unlock, Lock } from 'lucide-react';
 
-// Dummy data
-const stats = {
-  journals: 45,
-  authors: 1234,
-  articles: 5678
-};
+// Types
+interface Stats {
+  journals: number;
+  authors: number;
+  articles: number;
+}
 
-const popularArticles = [
-  {
-    id: 1,
-    title: "Sun'iy intellektning tibbiyotdagi roli",
-    authors_detail: [{ name: "Karimov A." }, { name: "Tursunova N." }],
-    published_date: "2025-03-01",
-    views: 234,
-    journal_name: "Tibbiyot jurnali"
-  },
-  {
-    id: 2,
-    title: "O‘zbekistonda ta’lim islohotlari: tahlil va istiqbollar",
-    authors_detail: [{ name: "Raximov B." }],
-    published_date: "2025-02-15",
-    views: 189,
-    journal_name: "Pedagogika"
-  },
-  {
-    id: 3,
-    title: "Iqlim o‘zgarishining qishloq xo‘jaligiga ta’siri",
-    authors_detail: [{ name: "Xasanova D." }, { name: "Sodiqov M." }],
-    published_date: "2025-01-20",
-    views: 145,
-    journal_name: "Ekologiya"
-  }
-];
+interface Article {
+  id: number;
+  title: string;
+  authors_detail: { name: string }[];
+  published_date: string;
+  views?: number;
+  journal_name?: string;
+}
 
-const popularJournals = [
-  {
-    id: 1,
-    name: "O‘zbekiston tibbiyot jurnali",
-    access_type: "open",
-    description: "Tibbiyot sohasidagi eng so‘nggi tadqiqotlar.",
-    article_count: 234,
-    cover_image: null
-  },
-  {
-    id: 2,
-    name: "Iqtisodiyot va innovatsiyalar",
-    access_type: "closed",
-    description: "Iqtisodiyot, biznes va innovatsion texnologiyalar.",
-    article_count: 156,
-    cover_image: null
-  }
-];
+interface Journal {
+  id: number;
+  name: string;
+  access_type: 'open' | 'closed';
+  description: string;
+  article_count: number;
+  cover_image: string | null;
+}
 
-const latestNews = [
-  {
-    id: 1,
-    title: "Yangi jurnal ochildi",
-    content: "Profi universiteti qoshida yangi ilmiy jurnal ish boshladi.",
-    image: null,
-    created_at: "2025-03-10"
-  },
-  {
-    id: 2,
-    title: "Xalqaro konferensiya",
-    content: "15-aprel kuni “Zamonaviy fan va ta’lim” mavzusida konferensiya bo‘lib o‘tadi.",
-    image: null,
-    created_at: "2025-03-05"
-  }
-];
+interface NewsItem {
+  id: number;
+  title: string;
+  content: string;
+  image: string | null;
+  created_at: string;
+}
 
-export default function Home() {
+async function getStats(): Promise<Stats> {
+  const res = await fetch('http://127.0.0.1:8000/api/stats/', { cache: 'no-store' });
+  if (!res.ok) return { journals: 0, authors: 0, articles: 0 };
+  return res.json();
+}
+
+async function getPopularArticles(): Promise<Article[]> {
+  const res = await fetch('http://127.0.0.1:8000/api/articles/?ordering=-views&limit=6', { cache: 'no-store' });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+async function getPopularJournals(): Promise<Journal[]> {
+  const res = await fetch('http://127.0.0.1:8000/api/journals/?ordering=-article_count&limit=4', { cache: 'no-store' });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+async function getLatestNews(): Promise<NewsItem[]> {
+  const res = await fetch('http://127.0.0.1:8000/api/news/', { cache: 'no-store' });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.slice(0, 3);
+}
+
+export default async function Home() {
+  const [stats, popularArticles, popularJournals, latestNews] = await Promise.all([
+    getStats(),
+    getPopularArticles(),
+    getPopularJournals(),
+    getLatestNews(),
+  ]);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero with search */}
+      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 
-            src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
-            alt="" 
+            src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+            alt=""
             className="w-full h-full object-cover"
           />
         </div>
@@ -152,7 +147,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Popular articles */}
+      {/* Popular Articles */}
       <section className="bg-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
@@ -178,7 +173,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Popular journals */}
+      {/* Popular Journals */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold">Mashhur jurnallar</h2>
