@@ -34,29 +34,50 @@ interface NewsItem {
   created_at: string;
 }
 
+// Fetch functions with error handling
 async function getStats(): Promise<Stats> {
-  const res = await fetch('http://127.0.0.1:8000/api/stats/', { cache: 'no-store' });
-  if (!res.ok) return { journals: 0, authors: 0, articles: 0 };
-  return res.json();
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/stats/', { cache: 'no-store' });
+    if (!res.ok) return { journals: 0, authors: 0, articles: 0 };
+    return res.json();
+  } catch (error) {
+    console.error('Failed to fetch stats:', error);
+    return { journals: 0, authors: 0, articles: 0 };
+  }
 }
 
 async function getPopularArticles(): Promise<Article[]> {
-  const res = await fetch('http://127.0.0.1:8000/api/articles/?ordering=-views&limit=6', { cache: 'no-store' });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/articles/?ordering=-views&limit=6', { cache: 'no-store' });
+    if (!res.ok) return [];
+    return res.json();
+  } catch (error) {
+    console.error('Failed to fetch articles:', error);
+    return [];
+  }
 }
 
 async function getPopularJournals(): Promise<Journal[]> {
-  const res = await fetch('http://127.0.0.1:8000/api/journals/?ordering=-article_count&limit=4', { cache: 'no-store' });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/journals/?ordering=-article_count&limit=4', { cache: 'no-store' });
+    if (!res.ok) return [];
+    return res.json();
+  } catch (error) {
+    console.error('Failed to fetch journals:', error);
+    return [];
+  }
 }
 
 async function getLatestNews(): Promise<NewsItem[]> {
-  const res = await fetch('http://127.0.0.1:8000/api/news/', { cache: 'no-store' });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.slice(0, 3);
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/news/', { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.slice(0, 3);
+  } catch (error) {
+    console.error('Failed to fetch news:', error);
+    return [];
+  }
 }
 
 export default async function Home() {
