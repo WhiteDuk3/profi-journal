@@ -4,3 +4,9 @@ __pycache__/
 venv/
 staticfiles/
 media/
+covers/
+pdfs/
+authors/
+journal_covers/
+news/
+test-django/
