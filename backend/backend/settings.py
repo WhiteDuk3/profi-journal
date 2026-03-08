@@ -87,7 +87,6 @@ USE_TZ = True
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files — local in dev, Backblaze B2 in production
 B2_KEY_ID = os.environ.get('B2_KEY_ID')
@@ -96,8 +95,14 @@ B2_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME')
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL')
 
 if B2_KEY_ID and B2_APP_KEY and B2_BUCKET_NAME:
-    # Production: use Backblaze B2
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
     AWS_ACCESS_KEY_ID = B2_KEY_ID
     AWS_SECRET_ACCESS_KEY = B2_APP_KEY
     AWS_STORAGE_BUCKET_NAME = B2_BUCKET_NAME
