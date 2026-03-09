@@ -17,7 +17,7 @@ interface Article {
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/articles/`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
