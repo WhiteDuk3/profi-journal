@@ -15,7 +15,7 @@ interface Journal {
 
 async function getJournals(): Promise<Journal[]> {
   try {
-    const res = await fetch(`${API}/api/journals/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/journals/`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
