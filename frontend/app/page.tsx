@@ -20,7 +20,7 @@ interface NewsItem {
 
 async function getStats(): Promise<Stats> {
   try {
-    const res = await fetch(`${API}/api/stats/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/stats/`, { next: { revalidate: 300 } });
     if (!res.ok) return { journals: 0, authors: 0, articles: 0 };
     return res.json();
   } catch { return { journals: 0, authors: 0, articles: 0 }; }
