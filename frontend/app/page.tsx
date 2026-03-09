@@ -28,7 +28,7 @@ async function getStats(): Promise<Stats> {
 
 async function getPopularArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/?ordering=-views&limit=6`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/articles/?ordering=-views&limit=6`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -36,7 +36,7 @@ async function getPopularArticles(): Promise<Article[]> {
 
 async function getPopularJournals(): Promise<Journal[]> {
   try {
-    const res = await fetch(`${API}/api/journals/?ordering=-article_count&limit=4`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/journals/?ordering=-article_count&limit=4`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -44,7 +44,7 @@ async function getPopularJournals(): Promise<Journal[]> {
 
 async function getLatestNews(): Promise<NewsItem[]> {
   try {
-    const res = await fetch(`${API}/api/news/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/news/`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     const data = await res.json();
     return data.slice(0, 3);
