@@ -10,7 +10,7 @@ interface Author {
 
 async function getAuthors(): Promise<Author[]> {
   try {
-    const res = await fetch(`${API}/api/authors/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/authors/`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
