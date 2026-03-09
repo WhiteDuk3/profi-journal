@@ -16,7 +16,7 @@ interface Article {
 
 async function getJournal(id: string): Promise<Journal | null> {
   try {
-    const res = await fetch(`${API}/api/journals/${id}/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/journals/${id}/`, { next: { revalidate: 300 } });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }
