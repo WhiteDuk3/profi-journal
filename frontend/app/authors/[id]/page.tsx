@@ -13,7 +13,7 @@ interface Article {
 
 async function getAuthor(id: string): Promise<Author | null> {
   try {
-    const res = await fetch(`${API}/api/authors/${id}/`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/authors/${id}/`, { next: { revalidate: 300 } });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }
