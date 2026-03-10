@@ -34,9 +34,13 @@ export default async function ArticlesPage() {
           display: flex; gap: 20px; background: #fff;
           border-radius: 12px; padding: 24px;
           border: 1px solid #e8ecf3; text-decoration: none;
-          transition: transform 0.2s, box-shadow 0.2s;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .article-row:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
+        .article-row:hover { border-color: #8B9DC3; box-shadow: 0 4px 20px rgba(28,43,74,0.08); }
+        @media (max-width: 640px) {
+          .article-row { padding: 16px; gap: 12px; }
+          .article-row img, .article-thumb { width: 64px !important; height: 64px !important; }
+        }
       `}</style>
 
       {/* Header */}
@@ -55,14 +59,14 @@ export default async function ArticlesPage() {
       </section>
 
       {/* List */}
-      <div className="container mx-auto px-4 md:px-8" style={{ padding: '48px 0' }}>
+      <div className="container mx-auto px-4 md:px-8" style={{ padding: '32px 0 48px' }}>
         {articles.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
             <FileText size={48} style={{ margin: '0 auto 16px', opacity: 0.3, display: 'block' }} />
             <p>Hozircha maqolalar mavjud emas.</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {articles.map((article) => {
               const authors = article.authors_detail?.map(a => a.name).join(', ') ?? '';
               return (
@@ -75,7 +79,7 @@ export default async function ArticlesPage() {
                       style={{ width: '88px', height: '88px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }}
                     />
                   ) : (
-                    <div style={{ width: '88px', height: '88px', background: '#F4F6FA', borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className='article-thumb' style={{ width: '88px', height: '88px', background: '#F4F6FA', borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <FileText size={28} color="#8B9DC3" />
                     </div>
                   )}
