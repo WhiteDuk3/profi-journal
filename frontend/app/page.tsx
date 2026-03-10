@@ -127,7 +127,7 @@ export default async function Home() {
           background: 'radial-gradient(circle, rgba(139,157,195,0.12) 0%, transparent 70%)', pointerEvents: 'none',
         }} />
 
-        <div className="container mx-auto px-4 md:px-16" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px' }}>
+        <div className="container mx-auto px-4 md:px-8" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px', maxWidth: '1280px', margin: '0 auto' }}>
           <div className="fade-up" style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
@@ -196,7 +196,7 @@ export default async function Home() {
 
       {/* QUICK ACTIONS */}
       <section style={{ background: '#fff', borderBottom: '1px solid #e8ecf3' }}>
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 md:px-8">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
             {[
               { icon: <Upload size={20} />, color: '#1C2B4A', title: 'Maqola topshirish', desc: "Jurnaldan birini tanlab, fayllarni yuklang va tahririyatga yuboring.", link: '/submit' },
@@ -221,7 +221,7 @@ export default async function Home() {
 
       {/* POPULAR ARTICLES */}
       <section style={{ padding: '80px 0', background: '#F4F6FA' }}>
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 md:px-8">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
             <div>
               <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '6px' }}>So'nggi tadqiqotlar</p>
@@ -260,7 +260,7 @@ export default async function Home() {
 
       {/* JOURNALS */}
       <section style={{ background: '#1C2B4A', padding: '80px 0' }}>
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 md:px-8">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
             <div>
               <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '6px' }}>Nashrlar</p>
@@ -310,7 +310,7 @@ export default async function Home() {
       {/* NEWS */}
       {latestNews.length > 0 && (
         <section style={{ padding: '80px 0', background: '#F4F6FA' }}>
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 md:px-8">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
               <div>
                 <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '6px' }}>Yangiliklar</p>
@@ -345,14 +345,18 @@ export default async function Home() {
       )}
 
       {/* CTA */}
-      <section style={{ background: 'linear-gradient(135deg, #2D4270 0%, #1C2B4A 100%)', padding: '64px 0' }}>
-        <div className="container mx-auto px-4" style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '12px' }}>Tadqiqotingizni ulashing</p>
-          <h2 style={{ fontSize: '2rem', fontWeight: 700, color: '#fff', marginBottom: '12px', fontFamily: 'Georgia, serif' }}>Maqolangizni nashr qiling</h2>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'sans-serif', marginBottom: '32px', maxWidth: '440px', margin: '0 auto 32px', lineHeight: 1.7 }}>
+      <section style={{ background: 'linear-gradient(135deg, #2D4270 0%, #1C2B4A 100%)', padding: '80px 24px' }}>
+        <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '16px' }}>
+            Tadqiqotingizni ulashing
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', fontWeight: 700, color: '#fff', marginBottom: '16px', fontFamily: 'Georgia, serif', lineHeight: 1.2 }}>
+            Maqolangizni nashr qiling
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'sans-serif', marginBottom: '36px', lineHeight: 1.75, fontSize: '15px' }}>
             Ilmiy tadqiqotingizni dunyoga taqdim eting. Tez ko'rib chiqish va professional tahrir xizmati.
           </p>
-          <Link href="/submit" className="cta-btn">
+          <Link href="/submit" className="cta-btn" style={{ margin: '0 auto' }}>
             <Upload size={18} /> Maqola topshirish
           </Link>
         </div>
