@@ -27,7 +27,7 @@ async function getStats(): Promise<Stats> {
 }
 async function getPopularArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/?ordering=-views&limit=6`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/articles/?ordering=-published_date&limit=6`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -132,7 +132,7 @@ export default async function Home() {
           background: 'radial-gradient(circle, rgba(139,157,195,0.12) 0%, transparent 70%)', pointerEvents: 'none',
         }} />
 
-        <div className="container mx-auto px-4 md:px-8" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px' }}>
+        <div className="container mx-auto px-4 md:px-32" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px' }}>
           <div className="fade-up" style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
