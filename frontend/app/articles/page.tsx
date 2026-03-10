@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FileText } from 'lucide-react';
+import { FileText, ArrowUpRight } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000';
 
@@ -7,12 +7,13 @@ interface Article {
   id: number;
   title: string;
   abstract: string;
-  authors_detail?: { name: string }[];
-  authors?: string;
+  authors_detail?: { id?: number; name: string }[];
   published_date: string;
   category: string;
   cover_image_url?: string;
   journal_name?: string;
+  journal_id?: number;
+  views?: number;
 }
 
 async function getArticles(): Promise<Article[]> {
@@ -27,70 +28,98 @@ export default async function ArticlesPage() {
   const articles = await getArticles();
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      {/* Page header */}
-      <div className="bg-brand-navy text-white py-10">
-        <div className="container mx-auto px-4">
-          <p className="text-brand-mist text-xs tracking-widest uppercase mb-1">INTEGRA</p>
-          <h1 className="!text-white text-3xl font-bold">Maqolalar</h1>
-          <p className="text-brand-mist text-sm mt-1">Barcha nashr etilgan ilmiy maqolalar</p>
-        </div>
-      </div>
+    <div className="min-h-screen" style={{ background: '#F4F6FA' }}>
+      <style>{`
+        .article-row {
+          display: flex; gap: 20px; background: #fff;
+          border-radius: 12px; padding: 24px;
+          border: 1px solid #e8ecf3; text-decoration: none;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .article-row:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
+      `}</style>
 
-      <div className="container mx-auto px-4 py-10">
+      {/* Header */}
+      <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '56px 0 48px' }}>
+        <div className="container mx-auto px-4 md:px-8">
+          <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '8px' }}>
+            INTEGRA
+          </p>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>
+            Maqolalar
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'sans-serif', fontSize: '14px' }}>
+            Barcha nashr etilgan ilmiy maqolalar — {articles.length} ta
+          </p>
+        </div>
+      </section>
+
+      {/* List */}
+      <div className="container mx-auto px-4 md:px-8" style={{ padding: '48px 0' }}>
         {articles.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
-            <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
+          <div style={{ textAlign: 'center', padding: '80px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
+            <FileText size={48} style={{ margin: '0 auto 16px', opacity: 0.3, display: 'block' }} />
             <p>Hozircha maqolalar mavjud emas.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {articles.map((article) => {
-              const authors = article.authors_detail?.map(a => a.name).join(', ') ?? article.authors ?? '';
+              const authors = article.authors_detail?.map(a => a.name).join(', ') ?? '';
               return (
-                <Link
-                  key={article.id}
-                  href={`/articles/${article.id}`}
-                  className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-md hover:border-brand-mist transition flex gap-5"
-                >
-                  {/* Left: text content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
+                <Link key={article.id} href={`/articles/${article.id}`} className="article-row">
+                  {/* Cover image */}
+                  {article.cover_image_url ? (
+                    <img
+                      src={article.cover_image_url.startsWith('http') ? article.cover_image_url : `${API}${article.cover_image_url}`}
+                      alt={article.title}
+                      style={{ width: '88px', height: '88px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }}
+                    />
+                  ) : (
+                    <div style={{ width: '88px', height: '88px', background: '#F4F6FA', borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FileText size={28} color="#8B9DC3" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       {article.category && (
-                        <span className="text-xs bg-brand-bg text-brand-steel px-2 py-0.5 rounded-full border border-brand-mist/30">
+                        <span style={{ fontSize: '11px', background: '#F4F6FA', color: '#3D5A8A', padding: '2px 10px', borderRadius: '100px', fontFamily: 'sans-serif', border: '1px solid #e8ecf3' }}>
                           {article.category}
                         </span>
                       )}
                       {article.journal_name && (
-                        <span className="text-xs text-gray-400">{article.journal_name}</span>
+                        <span style={{ fontSize: '11px', color: '#8B9DC3', fontFamily: 'sans-serif' }}>
+                          {article.journal_name}
+                        </span>
                       )}
                     </div>
-                    <h2 className="text-brand-navy font-semibold text-lg mb-1 line-clamp-2">
+                    <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1C2B4A', marginBottom: '6px', lineHeight: 1.35, fontFamily: 'Georgia, serif',
+                      overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
                       {article.title}
                     </h2>
                     {authors && (
-                      <p className="text-sm text-brand-steel mb-2">{authors}</p>
+                      <p style={{ fontSize: '13px', color: '#3D5A8A', fontFamily: 'sans-serif', marginBottom: '6px' }}>{authors}</p>
                     )}
                     {article.abstract && (
-                      <p className="text-sm text-gray-500 line-clamp-2">{article.abstract}</p>
+                      <p style={{ fontSize: '13px', color: '#6b7280', fontFamily: 'sans-serif', lineHeight: 1.5,
+                        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
+                        {article.abstract}
+                      </p>
                     )}
-                    <p className="text-xs text-gray-400 mt-3">
-                      {new Date(article.published_date).toLocaleDateString('uz-UZ')}
-                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '10px' }}>
+                      <span style={{ fontSize: '12px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
+                        {new Date(article.published_date).toLocaleDateString('uz-UZ')}
+                      </span>
+                      {article.views !== undefined && (
+                        <span style={{ fontSize: '12px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
+                          👁 {article.views}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Right: cover image (small, optional) */}
-                  {article.cover_image_url && (
-                    <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-brand-bg">
-                      <img
-                        src={article.cover_image_url.startsWith('http')
-                          ? article.cover_image_url
-                          : `${API}${article.cover_image_url}`}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <ArrowUpRight size={18} color="#8B9DC3" style={{ flexShrink: 0, marginTop: '4px' }} />
                 </Link>
               );
             })}
