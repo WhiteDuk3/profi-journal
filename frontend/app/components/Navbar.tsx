@@ -16,26 +16,26 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo — large and prominent */}
+          <Link href="/" className="flex items-center gap-4 flex-1">
             <img
               src="/logo.png"
               alt="INTEGRA logo"
-              className="w-9 h-9 object-contain"
+              style={{ width: '52px', height: '52px', objectFit: 'contain', flexShrink: 0 }}
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-base font-bold tracking-widest text-brand-navy">
+              <span style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: 800, letterSpacing: '0.12em', color: '#1C2B4A', fontFamily: 'Georgia, serif' }}>
                 INTEGRA
               </span>
-              <span className="hidden md:block text-[9px] text-gray-400 tracking-wide uppercase">
-                International Journal
+              <span style={{ fontSize: 'clamp(8px, 1.5vw, 11px)', color: '#8B9DC3', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
+                International Journal of Advanced Research and Studies
               </span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6 flex-shrink-0">
             {navLinks.map(link => (
               <Link
                 key={link.href}
@@ -56,7 +56,7 @@ export default function Navbar() {
           {/* Mobile toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-brand-navy"
+            className="md:hidden p-2 text-gray-600 hover:text-brand-navy flex-shrink-0"
           >
             {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
