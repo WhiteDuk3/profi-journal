@@ -199,9 +199,7 @@ export default async function Home() {
                 borderRight: i < 2 ? '1px solid #e8ecf3' : 'none',
                 textDecoration: 'none', transition: 'background 0.2s',
               }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#F4F6FA')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
+                className="quick-action-link">
                 <div style={{
                   width: '40px', height: '40px', borderRadius: '10px',
                   background: `${card.color}15`, display: 'flex', alignItems: 'center',
@@ -250,20 +248,17 @@ export default async function Home() {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
               {popularArticles.map((article, i) => (
-                <Link key={article.id} href={`/articles/${article.id}`} style={{
+                <Link key={article.id} href={`/articles/${article.id}`} className='article-card' style={{
                   display: 'block', background: '#fff', borderRadius: '12px',
                   padding: '24px', textDecoration: 'none',
                   border: '1px solid #e8ecf3',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
                   animation: `fadeUp 0.5s ease forwards`,
                   animationDelay: `${i * 0.05}s`,
                   opacity: 0,
                 }}
-                  onMouseEnter={e => {
                     e.currentTarget.style.transform = 'translateY(-3px)';
                     e.currentTarget.style.boxShadow = '0 12px 40px rgba(28,43,74,0.1)';
                   }}
-                  onMouseLeave={e => {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
@@ -328,16 +323,14 @@ export default async function Home() {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
               {popularJournals.map((journal) => (
-                <Link key={journal.id} href={`/journals/${journal.id}`} style={{
+                <Link key={journal.id} href={`/journals/${journal.id}`} className='journal-card' style={{
                   display: 'flex', gap: '16px', background: 'rgba(255,255,255,0.06)',
                   borderRadius: '12px', padding: '20px', textDecoration: 'none',
-                  border: '1px solid rgba(255,255,255,0.1)', transition: 'background 0.2s, border-color 0.2s',
+                  border: '1px solid rgba(255,255,255,0.1)',
                 }}
-                  onMouseEnter={e => {
                     e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
                     e.currentTarget.style.borderColor = 'rgba(139,157,195,0.4)';
                   }}
-                  onMouseLeave={e => {
                     e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
                     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
                   }}
@@ -410,16 +403,14 @@ export default async function Home() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
               {latestNews.map((item, i) => (
-                <div key={item.id} style={{
+                <div key={item.id} className='news-card' style={{
                   background: '#fff', borderRadius: '12px', overflow: 'hidden',
-                  border: '1px solid #e8ecf3', transition: 'transform 0.2s, box-shadow 0.2s',
+                  border: '1px solid #e8ecf3',
                   animation: `fadeUp 0.5s ease forwards`, animationDelay: `${i * 0.08}s`, opacity: 0,
                 }}
-                  onMouseEnter={e => {
                     e.currentTarget.style.transform = 'translateY(-3px)';
                     e.currentTarget.style.boxShadow = '0 12px 40px rgba(28,43,74,0.1)';
                   }}
-                  onMouseLeave={e => {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
@@ -471,18 +462,15 @@ export default async function Home() {
           <p style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'sans-serif', marginBottom: '32px', maxWidth: '480px', margin: '0 auto 32px' }}>
             Ilmiy tadqiqotingizni dunyoga taqdim eting. Tez ko'rib chiqish va professional tahrir xizmati.
           </p>
-          <Link href="/submit" style={{
+          <Link href="/submit" className='cta-btn' style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: '#fff', color: '#1C2B4A', padding: '14px 28px',
             borderRadius: '10px', textDecoration: 'none', fontWeight: 700,
             fontFamily: 'sans-serif', fontSize: '15px',
-            transition: 'transform 0.2s, box-shadow 0.2s',
           }}
-            onMouseEnter={e => {
               e.currentTarget.style.transform = 'translateY(-2px)';
               e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
             }}
-            onMouseLeave={e => {
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = 'none';
             }}
@@ -501,6 +489,14 @@ export default async function Home() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
+        .quick-action-link:hover { background: #F4F6FA !important; }
+        .article-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
+        .journal-card:hover { background: rgba(255,255,255,0.1) !important; border-color: rgba(139,157,195,0.4) !important; }
+        .news-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .article-card, .news-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .journal-card { transition: background 0.2s, border-color 0.2s; }
+        .cta-btn { transition: transform 0.2s, box-shadow 0.2s; }
       `}</style>
     </div>
   );
