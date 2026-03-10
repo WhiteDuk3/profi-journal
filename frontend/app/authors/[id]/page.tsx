@@ -21,7 +21,7 @@ async function getAuthor(id: string): Promise<Author | null> {
 
 async function getArticlesByAuthor(id: string): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/?authors=${id}`, { cache: 'no-store' });
+    const res = await fetch(`${API}/api/articles/?authors=${id}`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
