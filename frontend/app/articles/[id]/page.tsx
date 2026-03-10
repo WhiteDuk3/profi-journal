@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FileText, Calendar, Eye } from 'lucide-react';
+import { FileText, Calendar, Eye, ArrowLeft, BookOpen, User } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000';
 
@@ -9,11 +9,11 @@ interface Article {
   title: string;
   abstract: string;
   content: string;
-  authors_detail?: { name: string; affiliation?: string }[];
-  authors?: string;
+  authors_detail?: { id?: number; name: string; affiliation?: string; profile_image?: string }[];
   published_date: string;
   category: string;
   journal_name?: string;
+  journal_id?: number;
   views?: number;
   cover_image_url?: string;
   pdf_file_url?: string;
@@ -32,107 +32,138 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const article = await getArticle(id);
   if (!article) notFound();
 
-  const authors = article.authors_detail?.map(a => a.name).join(', ') ?? article.authors ?? '';
+  const authors = article.authors_detail?.map(a => a.name).join(', ') ?? '';
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen" style={{ background: '#F4F6FA' }}>
 
-        <Link href="/articles" className="inline-flex items-center text-brand-steel hover:text-brand-navy text-sm mb-6 transition">
-          ← Barcha maqolalar
-        </Link>
+      {/* Header band */}
+      <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '40px 0 48px' }}>
+        <div className="container mx-auto px-4 md:px-8" style={{ maxWidth: '900px' }}>
+          <Link href="/articles" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            color: '#8B9DC3', textDecoration: 'none', fontSize: '13px',
+            fontFamily: 'sans-serif', marginBottom: '24px',
+          }}>
+            <ArrowLeft size={14} /> Barcha maqolalar
+          </Link>
 
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
-
-          {/* Header band */}
-          <div className="bg-brand-navy px-8 py-6">
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              {article.category && (
-                <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full">
-                  {article.category}
-                </span>
-              )}
-              {article.journal_name && (
-                <span className="text-xs text-brand-mist">{article.journal_name}</span>
-              )}
-            </div>
-            <h1 className="!text-white text-2xl md:text-3xl font-bold leading-snug mb-3">
-              {article.title}
-            </h1>
-            <p className="text-brand-mist text-sm">{authors}</p>
-            <div className="flex items-center gap-4 mt-3 text-xs text-brand-mist/70">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {new Date(article.published_date).toLocaleDateString('uz-UZ')}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+            {article.category && (
+              <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '3px 12px', borderRadius: '100px', fontFamily: 'sans-serif' }}>
+                {article.category}
               </span>
-              {article.views !== undefined && (
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3 h-3" />
-                  {article.views} ko'rishlar
-                </span>
-              )}
-            </div>
+            )}
+            {article.journal_name && article.journal_id && (
+              <Link href={`/journals/${article.journal_id}`} style={{ fontSize: '11px', color: '#8B9DC3', textDecoration: 'none', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <BookOpen size={11} /> {article.journal_name}
+              </Link>
+            )}
           </div>
 
-          <div className="px-8 py-6">
-            {/* Abstract */}
-            <div className="bg-brand-bg rounded-lg p-5 mb-6 border-l-4 border-brand-steel">
-              <h2 className="text-sm font-semibold text-brand-navy uppercase tracking-wider mb-2">Annotatsiya</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">{article.abstract}</p>
-            </div>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', lineHeight: 1.25, marginBottom: '16px' }}>
+            {article.title}
+          </h1>
 
-            {/* Cover image */}
-            {article.cover_image_url && (
-              <div className="rounded-lg overflow-hidden mb-6 border border-gray-100">
-                <img
-                  src={article.cover_image_url.startsWith('http')
-                    ? article.cover_image_url
-                    : `${API}${article.cover_image_url}`}
-                  alt={article.title}
-                  className="w-full max-h-80 object-cover"
-                />
-              </div>
-            )}
+          {authors && (
+            <p style={{ color: '#8B9DC3', fontFamily: 'sans-serif', fontSize: '14px', marginBottom: '16px' }}>
+              {authors}
+            </p>
+          )}
 
-            {/* Content */}
-            {article.content && (
-              <div className="prose prose-sm max-w-none text-gray-700">
-                <h2 className="text-brand-navy font-semibold text-lg mb-3">Maqola matni</h2>
-                <div dangerouslySetInnerHTML={{ __html: article.content }} />
-              </div>
-            )}
-
-            {/* Authors detail */}
-            {article.authors_detail && article.authors_detail.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-100">
-                <h2 className="text-sm font-semibold text-brand-navy uppercase tracking-wider mb-3">Mualliflar</h2>
-                <div className="flex flex-wrap gap-3">
-                  {article.authors_detail.map((a, i) => (
-                    <div key={i} className="bg-brand-bg rounded-lg px-4 py-2 text-sm">
-                      <p className="font-medium text-brand-navy">{a.name}</p>
-                      {a.affiliation && <p className="text-gray-500 text-xs">{a.affiliation}</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* PDF download */}
-            {article.pdf_file_url && (
-              <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                <a href={article.pdf_file_url.startsWith('http')
-                    ? article.pdf_file_url
-                    : `${API}${article.pdf_file_url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-brand-navy text-white px-8 py-3 rounded-lg hover:bg-brand-mid transition font-medium">
-                  <FileText className="w-4 h-4" />
-                  PDF ni yuklab olish
-                </a>
-              </div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Calendar size={12} /> {new Date(article.published_date).toLocaleDateString('uz-UZ')}
+            </span>
+            {article.views !== undefined && (
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Eye size={12} /> {article.views} ko'rish
+              </span>
             )}
           </div>
         </div>
+      </section>
+
+      {/* Body */}
+      <div className="container mx-auto px-4 md:px-8" style={{ maxWidth: '900px', padding: '48px 0' }}>
+
+        {/* Cover image */}
+        {article.cover_image_url && (
+          <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', border: '1px solid #e8ecf3' }}>
+            <img
+              src={article.cover_image_url.startsWith('http') ? article.cover_image_url : `${API}${article.cover_image_url}`}
+              alt={article.title}
+              style={{ width: '100%', maxHeight: '360px', objectFit: 'cover' }}
+            />
+          </div>
+        )}
+
+        {/* Abstract */}
+        <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3', borderLeft: '4px solid #3D5A8A' }}>
+          <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '12px' }}>
+            Annotatsiya
+          </h2>
+          <p style={{ fontSize: '15px', color: '#374151', lineHeight: 1.75, fontFamily: 'Georgia, serif' }}>
+            {article.abstract}
+          </p>
+        </div>
+
+        {/* Content */}
+        {article.content && (
+          <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3' }}>
+            <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '16px' }}>
+              Maqola matni
+            </h2>
+            <div style={{ fontSize: '15px', color: '#374151', lineHeight: 1.8, fontFamily: 'Georgia, serif' }}
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
+          </div>
+        )}
+
+        {/* Authors */}
+        {article.authors_detail && article.authors_detail.length > 0 && (
+          <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3' }}>
+            <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '16px' }}>
+              Mualliflar
+            </h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+              {article.authors_detail.map((a, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F4F6FA', borderRadius: '10px', padding: '10px 14px' }}>
+                  {a.profile_image ? (
+                    <img src={a.profile_image.startsWith('http') ? a.profile_image : `${API}${a.profile_image}`}
+                      alt={a.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B4A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <User size={16} color="#8B9DC3" />
+                    </div>
+                  )}
+                  <div>
+                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#1C2B4A', fontFamily: 'sans-serif' }}>{a.name}</p>
+                    {a.affiliation && <p style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'sans-serif' }}>{a.affiliation}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* PDF download */}
+        {article.pdf_file_url && (
+          <div style={{ textAlign: 'center', paddingTop: '8px' }}>
+            <a
+              href={article.pdf_file_url.startsWith('http') ? article.pdf_file_url : `${API}${article.pdf_file_url}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                background: '#1C2B4A', color: '#fff', padding: '14px 32px',
+                borderRadius: '10px', textDecoration: 'none', fontWeight: 700,
+                fontFamily: 'sans-serif', fontSize: '15px',
+              }}
+            >
+              <FileText size={18} /> PDF ni yuklab olish
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
