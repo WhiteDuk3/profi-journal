@@ -16,19 +16,34 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo — large and prominent */}
+        <div className="flex justify-between items-center h-24">
+
+          {/* Logo — large and filling */}
           <Link href="/" className="flex items-center gap-4 flex-1">
             <img
               src="/logo.png"
               alt="INTEGRA logo"
-              style={{ width: '52px', height: '52px', objectFit: 'contain', flexShrink: 0 }}
+              style={{ width: '72px', height: '72px', objectFit: 'contain', flexShrink: 0 }}
             />
             <div className="flex flex-col leading-tight">
-              <span style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: 800, letterSpacing: '0.12em', color: '#1C2B4A', fontFamily: 'Georgia, serif' }}>
+              <span style={{
+                fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
+                fontWeight: 800,
+                letterSpacing: '0.1em',
+                color: '#1C2B4A',
+                fontFamily: 'Georgia, serif',
+                lineHeight: 1.1,
+              }}>
                 INTEGRA
               </span>
-              <span style={{ fontSize: 'clamp(8px, 1.5vw, 11px)', color: '#8B9DC3', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
+              <span style={{
+                fontSize: 'clamp(9px, 1.2vw, 12px)',
+                color: '#8B9DC3',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontFamily: 'sans-serif',
+                marginTop: '3px',
+              }}>
                 International Journal of Advanced Research and Studies
               </span>
             </div>
