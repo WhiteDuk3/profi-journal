@@ -91,8 +91,10 @@ export default async function Home() {
         }
         .news-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
         .quick-link {
-          display: block; padding: 32px 0; text-decoration: none; transition: background 0.2s;
+          display: block; padding: 32px 28px; text-decoration: none; transition: background 0.2s;
+          border-right: 1px solid #e8ecf3;
         }
+        .quick-link:last-child { border-right: none; }
         .quick-link:hover { background: #F4F6FA; }
         .cta-btn {
           display: inline-flex; align-items: center; gap: 8px;
@@ -195,13 +197,13 @@ export default async function Home() {
       {/* QUICK ACTIONS */}
       <section style={{ background: '#fff', borderBottom: '1px solid #e8ecf3' }}>
         <div className="container mx-auto px-4 md:px-8">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
             {[
               { icon: <Upload size={20} />, color: '#1C2B4A', title: 'Maqola topshirish', desc: "Jurnaldan birini tanlab, fayllarni yuklang va tahririyatga yuboring.", link: '/submit' },
               { icon: <Unlock size={20} />, color: '#059669', title: 'Ochiq maqolalar', desc: "Hamma uchun bepul. Istalgan vaqt o'qing va yuklab oling.", link: '/articles?access=open' },
               { icon: <Lock size={20} />, color: '#3D5A8A', title: 'Yopiq maqolalar', desc: "Obuna bo'lgan yoki ruxsat olgan foydalanuvchilar uchun.", link: '/articles?access=closed' },
-            ].map((card, i) => (
-              <Link key={card.title} href={card.link} className="quick-link" style={{ borderRight: i < 2 ? '1px solid #e8ecf3' : 'none', paddingLeft: '0', paddingRight: i < 2 ? '28px' : '0' }}>
+            ].map((card) => (
+              <Link key={card.title} href={card.link} className="quick-link">
                 <div style={{
                   width: '40px', height: '40px', borderRadius: '10px',
                   background: `${card.color}18`, display: 'flex', alignItems: 'center',
