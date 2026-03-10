@@ -91,11 +91,16 @@ export default async function Home() {
         }
         .news-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(28,43,74,0.1); }
         .quick-link {
-          display: block; padding: 32px 28px; text-decoration: none; transition: background 0.2s;
+          display: block; padding: 32px 28px; text-decoration: none;
+          transition: background 0.2s, box-shadow 0.2s;
           border-right: 1px solid #e8ecf3;
         }
         .quick-link:last-child { border-right: none; }
-        .quick-link:hover { background: #F4F6FA; }
+        .quick-link:hover { background: #EEF1F7; }
+        @media (max-width: 768px) {
+          .quick-link { border-right: none; border-bottom: 1px solid #e8ecf3; padding: 24px 16px; }
+          .quick-link:last-child { border-bottom: none; }
+        }
         .cta-btn {
           display: inline-flex; align-items: center; gap: 8px;
           background: #fff; color: #1C2B4A; padding: 14px 28px;
@@ -127,7 +132,7 @@ export default async function Home() {
           background: 'radial-gradient(circle, rgba(139,157,195,0.12) 0%, transparent 70%)', pointerEvents: 'none',
         }} />
 
-        <div className="container mx-auto px-4 md:px-32" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px' }}>
+        <div className="container mx-auto px-4 md:px-8" style={{ position: 'relative', zIndex: 1, paddingTop: '60px', paddingBottom: '100px' }}>
           <div className="fade-up" style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
