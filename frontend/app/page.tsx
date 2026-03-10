@@ -175,9 +175,9 @@ export default async function Home() {
 
           <div className="fade-up-4" style={{ display: 'flex', gap: '48px', marginTop: '56px', flexWrap: 'wrap' }}>
             {[
-              { value: stats.journals, label: 'Jurnal' },
-              { value: stats.authors, label: 'Muallif' },
-              { value: stats.articles, label: 'Maqola' },
+              { value: stats.journals, label: stats.journals === 1 ? 'ta jurnal' : 'ta jurnal' },
+              { value: stats.authors, label: 'ta muallif' },
+              { value: stats.articles, label: 'ta maqola' },
             ].map((s) => (
               <div key={s.label}>
                 <div style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 800, color: '#fff', lineHeight: 1, fontFamily: 'Georgia, serif' }}>
@@ -237,7 +237,7 @@ export default async function Home() {
               <p>Hozircha maqolalar mavjud emas.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px', maxWidth: popularArticles.length === 1 ? '400px' : '100%' }}>
               {popularArticles.map((article, i) => (
                 <Link key={article.id} href={`/articles/${article.id}`} className={`article-card fade-up-${Math.min(i + 1, 6)}`}>
                   <div style={{ fontSize: '11px', color: '#3D5A8A', fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 600 }}>Ilmiy maqola</div>
@@ -273,7 +273,7 @@ export default async function Home() {
           {popularJournals.length === 0 ? (
             <p style={{ color: '#8B9DC3', fontFamily: 'sans-serif', textAlign: 'center', padding: '40px' }}>Hozircha jurnallar mavjud emas.</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px', maxWidth: popularJournals.length === 1 ? '480px' : '100%' }}>
               {popularJournals.map((journal) => (
                 <Link key={journal.id} href={`/journals/${journal.id}`} className="journal-card">
                   {journal.cover_image ? (
@@ -320,7 +320,7 @@ export default async function Home() {
                 Barchasini ko'rish <ArrowUpRight size={14} />
               </Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', maxWidth: latestNews.length === 1 ? '420px' : '100%' }}>
               {latestNews.map((item, i) => (
                 <div key={item.id} className={`news-card fade-up-${Math.min(i + 1, 6)}`}>
                   {item.image ? (
