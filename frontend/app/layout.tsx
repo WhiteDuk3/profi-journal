@@ -30,25 +30,16 @@ export default function RootLayout({
           <div className="container mx-auto px-4">
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px' }}>
               {/* Logo — white filter for dark background */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                <img
-                  src="/logo.png"
-                  alt="INTEGRA"
-                  style={{
-                    width: '36px', height: '36px', objectFit: 'contain',
-                    filter: 'brightness(0) invert(1)',
-                    opacity: 0.9,
-                  }}
-                />
-                <div>
-                  <div style={{ fontWeight: 800, fontSize: '16px', letterSpacing: '0.1em', fontFamily: 'Georgia, serif' }}>
-                    INTEGRA
-                  </div>
-                  <div style={{ fontSize: '9px', color: '#8B9DC3', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif' }}>
-                    International Journal
-                  </div>
-                </div>
-              </div>
+              <img
+                src="/logo.png"
+                alt="INTEGRA"
+                style={{
+                  width: '72px', height: '72px', objectFit: 'contain',
+                  filter: 'brightness(0) invert(1)',
+                  opacity: 0.85,
+                  marginBottom: '4px',
+                }}
+              />
 
               <div style={{ width: '32px', height: '1px', background: 'rgba(139,157,195,0.3)', margin: '4px 0' }} />
 
