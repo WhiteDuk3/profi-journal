@@ -27,7 +27,7 @@ export default function RootLayout({
           color: 'white',
           padding: '48px 0 32px',
         }}>
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 md:px-8">
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px' }}>
               {/* Logo — white filter for dark background */}
               <img
