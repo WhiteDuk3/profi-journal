@@ -1,134 +1,102 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FileText, Calendar, Eye, ArrowLeft, BookOpen, User } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000';
 
+interface Author {
+  id: number; name: string; affiliation: string;
+  bio: string; profile_image: string | null; article_count: number;
+}
 interface Article {
-  id: number;
-  title: string;
-  abstract: string;
-  content: string;
-  authors_detail?: { id?: number; name: string; affiliation?: string; profile_image?: string }[];
-  published_date: string;
-  category: string;
-  journal_name?: string;
-  journal_id?: number;
-  views?: number;
-  cover_image_url?: string;
-  pdf_file_url?: string;
+  id: number; title: string; journal_name?: string; published_date: string; category?: string;
 }
 
-async function getArticle(id: string): Promise<Article | null> {
+async function getAuthor(id: string): Promise<Author | null> {
   try {
-    const res = await fetch(`${API}/api/articles/${id}/`, {
+    const res = await fetch(`${API}/api/authors/${id}/`, {
       next: { revalidate: 300 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }
 }
 
-export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const article = await getArticle(id);
-  if (!article) notFound();
+async function getArticlesByAuthor(id: string): Promise<Article[]> {
+  try {
+    const res = await fetch(`${API}/api/articles/?author=${id}`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch { return []; }
+}
 
-  const authors = article.authors_detail?.map(a => a.name).join(', ') ?? '';
+export default async function AuthorPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [author, articles] = await Promise.all([getAuthor(id), getArticlesByAuthor(id)]);
+  if (!author) notFound();
 
   return (
     <div className="min-h-screen" style={{ background: '#F4F6FA' }}>
       <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '40px 0 48px' }}>
-        <div className="container mx-auto px-4 md:px-8" style={{ maxWidth: '900px' }}>
-          <Link href="/articles" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#8B9DC3', textDecoration: 'none', fontSize: '13px', fontFamily: 'sans-serif', marginBottom: '24px' }}>
-            <ArrowLeft size={14} /> Barcha maqolalar
+        <div className="container mx-auto px-4 md:px-8">
+          <Link href="/authors" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#8B9DC3', textDecoration: 'none', fontSize: '13px', fontFamily: 'sans-serif', marginBottom: '24px' }}>
+            <ArrowLeft size={14} /> Barcha mualliflar
           </Link>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-            {article.category && (
-              <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '3px 12px', borderRadius: '100px', fontFamily: 'sans-serif' }}>
-                {article.category}
-              </span>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            {author.profile_image ? (
+              <img src={author.profile_image.startsWith('http') ? author.profile_image : `${API}${author.profile_image}`}
+                alt={author.name} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
+            ) : (
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={32} color="#8B9DC3" />
+              </div>
             )}
-            {article.journal_name && article.journal_id && (
-              <Link href={`/journals/${article.journal_id}`} style={{ fontSize: '11px', color: '#8B9DC3', textDecoration: 'none', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <BookOpen size={11} /> {article.journal_name}
-              </Link>
-            )}
-          </div>
-          <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', lineHeight: 1.25, marginBottom: '16px' }}>
-            {article.title}
-          </h1>
-          {authors && (
-            <p style={{ color: '#8B9DC3', fontFamily: 'sans-serif', fontSize: '14px', marginBottom: '16px' }}>{authors}</p>
-          )}
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <Calendar size={12} /> {new Date(article.published_date).toLocaleDateString('uz-UZ')}
-            </span>
-            {article.views !== undefined && (
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Eye size={12} /> {article.views} ko&apos;rish
-              </span>
-            )}
+            <div>
+              <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', marginBottom: '6px' }}>
+                {author.name}
+              </h1>
+              {author.affiliation && (
+                <p style={{ color: '#8B9DC3', fontFamily: 'sans-serif', fontSize: '14px', marginBottom: '6px' }}>{author.affiliation}</p>
+              )}
+              {author.bio && author.bio.length > 3 && (
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'sans-serif', fontSize: '13px', maxWidth: '560px', lineHeight: 1.6 }}>{author.bio}</p>
+              )}
+              <p style={{ color: '#8B9DC3', fontSize: '12px', fontFamily: 'sans-serif', marginTop: '8px' }}>{author.article_count} ta maqola</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 md:px-8" style={{ maxWidth: '900px', padding: '48px 0' }}>
-        {article.cover_image_url && (
-          <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', border: '1px solid #e8ecf3' }}>
-            <img src={article.cover_image_url.startsWith('http') ? article.cover_image_url : `${API}${article.cover_image_url}`}
-              alt={article.title} style={{ width: '100%', maxHeight: '360px', objectFit: 'cover' }} />
-          </div>
-        )}
-        <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3', borderLeft: '4px solid #3D5A8A' }}>
-          <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '12px' }}>
-            Annotatsiya
-          </h2>
-          <p style={{ fontSize: '15px', color: '#374151', lineHeight: 1.75, fontFamily: 'Georgia, serif' }}>{article.abstract}</p>
-        </div>
-        {article.content && (
-          <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3' }}>
-            <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '16px' }}>
-              Maqola matni
-            </h2>
-            <div style={{ fontSize: '15px', color: '#374151', lineHeight: 1.8, fontFamily: 'Georgia, serif' }}
-              dangerouslySetInnerHTML={{ __html: article.content }} />
-          </div>
-        )}
-        {article.authors_detail && article.authors_detail.length > 0 && (
-          <div style={{ background: '#fff', borderRadius: '12px', padding: '28px', marginBottom: '24px', border: '1px solid #e8ecf3' }}>
-            <h2 style={{ fontSize: '11px', fontWeight: 700, color: '#3D5A8A', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '16px' }}>
-              Mualliflar
-            </h2>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              {article.authors_detail.map((a, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F4F6FA', borderRadius: '10px', padding: '10px 14px' }}>
-                  {a.profile_image ? (
-                    <img src={a.profile_image.startsWith('http') ? a.profile_image : `${API}${a.profile_image}`}
-                      alt={a.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B4A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <User size={16} color="#8B9DC3" />
-                    </div>
+      <div className="container mx-auto px-4 md:px-8" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1C2B4A', fontFamily: 'Georgia, serif', marginBottom: '20px' }}>
+          Muallifning maqolalari
+        </h2>
+        {articles.length === 0 ? (
+          <p style={{ color: '#9ca3af', textAlign: 'center', padding: '40px', fontFamily: 'sans-serif' }}>
+            Bu muallifning hali maqolalari yo&apos;q.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {articles.map((article) => (
+              <Link key={article.id} href={`/articles/${article.id}`}
+                style={{ background: '#fff', borderRadius: '10px', padding: '16px 20px', textDecoration: 'none', border: '1px solid #e8ecf3', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1C2B4A', fontFamily: 'Georgia, serif', marginBottom: '4px' }}>{article.title}</h3>
+                  {article.journal_name && (
+                    <p style={{ fontSize: '12px', color: '#8B9DC3', fontFamily: 'sans-serif' }}>{article.journal_name}</p>
                   )}
-                  <div>
-                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#1C2B4A', fontFamily: 'sans-serif' }}>{a.name}</p>
-                    {a.affiliation && <p style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'sans-serif' }}>{a.affiliation}</p>}
-                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {article.pdf_file_url && (
-          <div style={{ textAlign: 'center', paddingTop: '8px' }}>
-            <a href={article.pdf_file_url.startsWith('http') ? article.pdf_file_url : `${API}${article.pdf_file_url}`}
-              target="_blank" rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#1C2B4A', color: '#fff', padding: '14px 32px', borderRadius: '10px', textDecoration: 'none', fontWeight: 700, fontFamily: 'sans-serif', fontSize: '15px' }}>
-              <FileText size={18} /> PDF ni yuklab olish
-            </a>
+                <span style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'sans-serif', flexShrink: 0 }}>
+                  {new Date(article.published_date).toLocaleDateString('uz-UZ')}
+                </span>
+              </Link>
+            ))}
           </div>
         )}
       </div>
