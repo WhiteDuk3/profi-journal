@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ArrowLeft, User } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000';
 
@@ -8,12 +9,15 @@ interface Author {
   bio: string; profile_image: string | null; article_count: number;
 }
 interface Article {
-  id: number; title: string; journal_name?: string; published_date: string;
+  id: number; title: string; journal_name?: string; published_date: string; category?: string;
 }
 
 async function getAuthor(id: string): Promise<Author | null> {
   try {
-    const res = await fetch(`${API}/api/authors/${id}/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/authors/${id}/`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }
@@ -21,7 +25,10 @@ async function getAuthor(id: string): Promise<Author | null> {
 
 async function getArticlesByAuthor(id: string): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/?authors=${id}`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/articles/?author=${id}`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -33,53 +40,59 @@ export default async function AuthorPage({ params }: { params: Promise<{ id: str
   if (!author) notFound();
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <div className="bg-brand-navy text-white py-10">
-        <div className="container mx-auto px-4 max-w-4xl flex items-center gap-6">
-          {author.profile_image ? (
-            <img
-              src={author.profile_image.startsWith('http') ? author.profile_image : `${API}${author.profile_image}`}
-              alt={author.name}
-              className="w-20 h-20 rounded-full object-cover border-2 border-white/20 flex-shrink-0"
-            />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border-2 border-white/20">
-              <span className="text-white font-bold text-2xl">{author.name.charAt(0)}</span>
-            </div>
-          )}
-          <div>
-            <h1 className="!text-white text-2xl font-bold">{author.name}</h1>
-            {author.affiliation && <p className="text-brand-mist text-sm mt-1">{author.affiliation}</p>}
-            {author.bio && author.bio.length > 3 && (
-              <p className="text-blue-100/70 text-sm mt-2 max-w-xl">{author.bio}</p>
+    <div className="min-h-screen" style={{ background: '#F4F6FA' }}>
+      <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '40px 0 48px' }}>
+        <div className="container mx-auto px-4 md:px-8">
+          <Link href="/authors" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#8B9DC3', textDecoration: 'none', fontSize: '13px', fontFamily: 'sans-serif', marginBottom: '24px' }}>
+            <ArrowLeft size={14} /> Barcha mualliflar
+          </Link>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            {author.profile_image ? (
+              <img src={author.profile_image.startsWith('http') ? author.profile_image : `${API}${author.profile_image}`}
+                alt={author.name} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
+            ) : (
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={32} color="#8B9DC3" />
+              </div>
             )}
-            <p className="text-brand-mist text-xs mt-2">{author.article_count} ta maqola</p>
+            <div>
+              <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', marginBottom: '6px' }}>
+                {author.name}
+              </h1>
+              {author.affiliation && (
+                <p style={{ color: '#8B9DC3', fontFamily: 'sans-serif', fontSize: '14px', marginBottom: '6px' }}>{author.affiliation}</p>
+              )}
+              {author.bio && author.bio.length > 3 && (
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'sans-serif', fontSize: '13px', maxWidth: '560px', lineHeight: 1.6 }}>{author.bio}</p>
+              )}
+              <p style={{ color: '#8B9DC3', fontSize: '12px', fontFamily: 'sans-serif', marginTop: '8px' }}>{author.article_count} ta maqola</p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link href="/authors" className="inline-flex items-center text-brand-steel hover:text-brand-navy text-sm mb-6 transition">
-          ← Barcha mualliflar
-        </Link>
-
-        <h2 className="text-xl font-bold text-brand-navy mb-4">Muallifning maqolalari</h2>
-
+      <div className="container mx-auto px-4 md:px-8" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1C2B4A', fontFamily: 'Georgia, serif', marginBottom: '20px' }}>
+          Muallifning maqolalari
+        </h2>
         {articles.length === 0 ? (
-          <p className="text-gray-400 text-center py-10">Bu muallifning hali maqolalari yo'q.</p>
+          <p style={{ color: '#9ca3af', textAlign: 'center', padding: '40px', fontFamily: 'sans-serif' }}>
+            Bu muallifning hali maqolalari yo&apos;q.
+          </p>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {articles.map((article) => (
-              <Link
-                key={article.id}
-                href={`/articles/${article.id}`}
-                className="bg-white rounded-lg border border-gray-100 px-6 py-4 hover:shadow-sm hover:border-brand-mist transition"
-              >
-                <h3 className="font-semibold text-brand-navy mb-1">{article.title}</h3>
-                <p className="text-xs text-gray-400">
-                  {article.journal_name && `${article.journal_name} · `}
+              <Link key={article.id} href={`/articles/${article.id}`}
+                style={{ background: '#fff', borderRadius: '10px', padding: '16px 20px', textDecoration: 'none', border: '1px solid #e8ecf3', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1C2B4A', fontFamily: 'Georgia, serif', marginBottom: '4px' }}>{article.title}</h3>
+                  {article.journal_name && (
+                    <p style={{ fontSize: '12px', color: '#8B9DC3', fontFamily: 'sans-serif' }}>{article.journal_name}</p>
+                  )}
+                </div>
+                <span style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'sans-serif', flexShrink: 0 }}>
                   {new Date(article.published_date).toLocaleDateString('uz-UZ')}
-                </p>
+                </span>
               </Link>
             ))}
           </div>
