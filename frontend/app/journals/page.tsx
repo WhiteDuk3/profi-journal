@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, ArrowUpRight } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000';
 
@@ -15,7 +15,10 @@ interface Journal {
 
 async function getJournals(): Promise<Journal[]> {
   try {
-    const res = await fetch(`${API}/api/journals/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/journals/`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -25,66 +28,86 @@ export default async function JournalsPage() {
   const journals = await getJournals();
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <div className="bg-brand-navy text-white py-10">
-        <div className="container mx-auto px-4">
-          <p className="text-brand-mist text-xs tracking-widest uppercase mb-1">INTEGRA</p>
-          <h1 className="!text-white text-3xl font-bold">Jurnallar</h1>
-          <p className="text-brand-mist text-sm mt-1">Barcha nashr jurnallari</p>
-        </div>
-      </div>
+    <div className="min-h-screen" style={{ background: '#fff' }}>
+      <style>{`
+        .journal-row {
+          display: flex; gap: 20px; align-items: flex-start;
+          padding: 20px 0;
+          border-bottom: 1px solid #e8ecf3;
+          text-decoration: none;
+          transition: background 0.15s;
+        }
+        .journal-row:first-child { border-top: 1px solid #e8ecf3; }
+        .journal-row:hover { background: #F4F6FA; padding-left: 12px; padding-right: 12px; margin-left: -12px; margin-right: -12px; }
+        @media (max-width: 640px) {
+          .journal-row { gap: 12px; }
+          .journal-cover { width: 56px !important; height: '74px' !important; }
+        }
+      `}</style>
 
-      <div className="container mx-auto px-4 py-10">
+      <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '56px 0 48px' }}>
+        <div className="container mx-auto px-4 md:px-8">
+          <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '8px' }}>
+            INTEGRA
+          </p>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 700, color: '#fff', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>
+            Jurnallar
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'sans-serif', fontSize: '14px' }}>
+            Barcha nashr jurnallari — {journals.length} ta
+          </p>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-8" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
         {journals.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
-            <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
+          <div style={{ textAlign: 'center', padding: '80px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
+            <BookOpen size={48} style={{ margin: '0 auto 16px', opacity: 0.3, display: 'block' }} />
             <p>Hozircha jurnallar mavjud emas.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
             {journals.map((journal) => (
-              <Link
-                key={journal.id}
-                href={`/journals/${journal.id}`}
-                className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-brand-mist transition flex flex-col"
-              >
-                {/* Cover */}
+              <Link key={journal.id} href={`/journals/${journal.id}`} className="journal-row">
                 {journal.cover_image ? (
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={journal.cover_image.startsWith('http')
-                        ? journal.cover_image
-                        : `${API}${journal.cover_image}`}
-                      alt={journal.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <img
+                    src={journal.cover_image.startsWith('http') ? journal.cover_image : `${API}${journal.cover_image}`}
+                    alt={journal.name}
+                    className="journal-cover"
+                    style={{ width: '72px', height: '96px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0 }}
+                  />
                 ) : (
-                  <div className="h-40 bg-gradient-to-br from-brand-navy to-brand-mid flex items-center justify-center">
-                    <BookOpen className="w-12 h-12 text-white/30" />
+                  <div className="journal-cover" style={{ width: '72px', height: '96px', background: '#1C2B4A', borderRadius: '6px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <BookOpen size={24} color="#8B9DC3" />
                   </div>
                 )}
-
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h2 className="font-bold text-brand-navy text-lg leading-tight">{journal.name}</h2>
-                    <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 font-medium ${
-                      journal.access_type === 'open'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-gray-100 text-gray-600 border border-gray-200'
-                    }`}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{
+                      fontSize: '11px', padding: '2px 10px', borderRadius: '100px', fontFamily: 'sans-serif',
+                      background: journal.access_type === 'open' ? 'rgba(5,150,105,0.1)' : '#EEF1F7',
+                      color: journal.access_type === 'open' ? '#059669' : '#3D5A8A',
+                    }}>
                       {journal.access_type === 'open' ? 'Ochiq' : 'Yopiq'}
                     </span>
+                    {journal.issn && (
+                      <span style={{ fontSize: '11px', color: '#8B9DC3', fontFamily: 'monospace' }}>ISSN: {journal.issn}</span>
+                    )}
                   </div>
-
-                  {journal.issn && (
-                    <p className="text-xs text-brand-steel font-mono mb-2">ISSN: {journal.issn}</p>
+                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1C2B4A', fontFamily: 'Georgia, serif', marginBottom: '4px', lineHeight: 1.3 }}>
+                    {journal.name}
+                  </h2>
+                  {journal.description && (
+                    <p style={{ fontSize: '13px', color: '#6b7280', fontFamily: 'sans-serif', lineHeight: 1.5, marginBottom: '6px',
+                      overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
+                      {journal.description}
+                    </p>
                   )}
-                  <p className="text-sm text-gray-500 line-clamp-2 flex-1">{journal.description}</p>
-                  <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
+                  <p style={{ fontSize: '11px', color: '#8B9DC3', fontFamily: 'sans-serif' }}>
                     {journal.article_count} ta maqola
-                  </div>
+                  </p>
                 </div>
+                <ArrowUpRight size={16} color="#8B9DC3" style={{ flexShrink: 0, marginTop: '4px' }} />
               </Link>
             ))}
           </div>
