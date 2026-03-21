@@ -20,28 +20,28 @@ interface NewsItem {
 
 async function getStats(): Promise<Stats> {
   try {
-    const res = await fetch(`${API}/api/stats/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/stats/`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return { journals: 0, authors: 0, articles: 0 };
     return res.json();
   } catch { return { journals: 0, authors: 0, articles: 0 }; }
 }
 async function getPopularArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/?ordering=-published_date&limit=6`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/articles/?ordering=-published_date&limit=6`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
 }
 async function getPopularJournals(): Promise<Journal[]> {
   try {
-    const res = await fetch(`${API}/api/journals/?ordering=-article_count&limit=4`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/journals/?ordering=-article_count&limit=4`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
 }
 async function getLatestNews(): Promise<NewsItem[]> {
   try {
-    const res = await fetch(`${API}/api/news/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/news/`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const data = await res.json();
     return data.slice(0, 3);
