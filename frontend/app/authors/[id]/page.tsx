@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, User } from 'lucide-react';
@@ -16,7 +18,7 @@ async function getAuthor(id: string): Promise<Author | null> {
   try {
     const res = await fetch(`${API}/api/authors/${id}/`, {
       next: { revalidate: 300 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
     return res.json();
@@ -27,7 +29,7 @@ async function getArticlesByAuthor(id: string): Promise<Article[]> {
   try {
     const res = await fetch(`${API}/api/articles/?author=${id}`, {
       next: { revalidate: 300 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return [];
     return res.json();
