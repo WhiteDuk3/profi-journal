@@ -18,7 +18,10 @@ interface Article {
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(`${API}/api/articles/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/api/articles/`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }
@@ -46,7 +49,6 @@ export default async function ArticlesPage() {
         }
       `}</style>
 
-      {/* Header */}
       <section style={{ background: 'linear-gradient(135deg, #0d1b35 0%, #1C2B4A 100%)', padding: '56px 0 48px' }}>
         <div className="container mx-auto px-4 md:px-8">
           <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8B9DC3', fontFamily: 'sans-serif', marginBottom: '8px' }}>
@@ -61,7 +63,6 @@ export default async function ArticlesPage() {
         </div>
       </section>
 
-      {/* List */}
       <div className="container mx-auto px-4 md:px-8" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
         {articles.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px', color: '#9ca3af', fontFamily: 'sans-serif' }}>
@@ -74,7 +75,6 @@ export default async function ArticlesPage() {
               const authors = article.authors_detail?.map(a => a.name).join(', ') ?? '';
               return (
                 <Link key={article.id} href={`/articles/${article.id}`} className="article-row">
-                  {/* Cover image */}
                   {article.cover_image_url ? (
                     <img
                       src={article.cover_image_url.startsWith('http') ? article.cover_image_url : `${API}${article.cover_image_url}`}
@@ -87,8 +87,6 @@ export default async function ArticlesPage() {
                       <FileText size={24} color="#8B9DC3" />
                     </div>
                   )}
-
-                  {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                       {article.category && (
@@ -126,7 +124,6 @@ export default async function ArticlesPage() {
                       )}
                     </div>
                   </div>
-
                   <ArrowUpRight size={16} color="#8B9DC3" style={{ flexShrink: 0, marginTop: '4px' }} />
                 </Link>
               );
