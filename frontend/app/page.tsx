@@ -249,16 +249,16 @@ export default async function Home() {
         .journal-card {
           display: flex; gap: 20px;
           padding: 28px 32px;
-          background: rgba(255,255,255,0.03);
-          border: 0.5px solid rgba(139,157,195,0.1);
+          background: transparent;
+          border: 0.5px solid rgba(139,157,195,0.12);
           text-decoration: none;
           transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
           cursor: pointer;
         }
         .journal-card:hover {
-          background: rgba(255,255,255,0.07);
-          border-color: rgba(139,157,195,0.28);
-          box-shadow: 0 0 32px rgba(61,90,138,0.1);
+          background: rgba(28,43,74,0.25);
+          border-color: rgba(139,157,195,0.3);
+          box-shadow: inset 0 0 40px rgba(61,90,138,0.08);
         }
         .journal-card:hover .journal-name {
           color: #eaf0ff;
@@ -267,14 +267,14 @@ export default async function Home() {
 
         /* ── NEWS CARDS ── */
         .news-card {
-          background: rgba(255,255,255,0.03);
-          border: 0.5px solid rgba(139,157,195,0.1);
+          background: transparent;
+          border: 0.5px solid rgba(139,157,195,0.12);
           transition: background 0.4s, border-color 0.4s;
           cursor: pointer; text-decoration: none; display: block;
         }
         .news-card:hover {
-          background: rgba(255,255,255,0.06);
-          border-color: rgba(139,157,195,0.25);
+          background: rgba(28,43,74,0.25);
+          border-color: rgba(139,157,195,0.28);
         }
         .news-card:hover .news-title { color: #eaf0ff; }
 
@@ -347,23 +347,24 @@ export default async function Home() {
         position: 'relative',
       }}>
 
-        {/* Logo */}
-        <div className="h-logo" style={{ position: 'relative', width: 110, height: 110, marginBottom: 52 }}>
+        {/* Logo — actual spiral image, inverted white for dark background */}
+        <div className="h-logo" style={{
+          position: 'relative', width: 110, height: 110, marginBottom: 52,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
           <div className="logo-glow" />
-          <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
-            <circle cx="55" cy="55" r="50"  stroke="#3D5A8A" strokeWidth="0.7" opacity="0.65"/>
-            <circle cx="55" cy="55" r="37"  stroke="#3D5A8A" strokeWidth="0.6" opacity="0.55"/>
-            <circle cx="55" cy="55" r="26"  stroke="#3D5A8A" strokeWidth="0.55" opacity="0.5"/>
-            <circle cx="55" cy="55" r="16"  stroke="#3D5A8A" strokeWidth="0.5" opacity="0.45"/>
-            <circle cx="55" cy="55" r="8"   stroke="#3D5A8A" strokeWidth="0.5" opacity="0.4"/>
-            <line x1="55" y1="5" x2="55" y2="105" stroke="#5a7aaa" strokeWidth="0.7" opacity="0.5"/>
-            <circle cx="55" cy="55" r="3.5" fill="#9ab0d0" opacity="0.95"/>
-            <path d="M55 55 Q67 47 73 55 Q67 63 55 55Z" fill="#8B9DC3" opacity="0.5"/>
-            <path d="M55 55 Q43 63 37 55 Q43 47 55 55Z" fill="#2D4270" opacity="0.5"/>
-            <path d="M55 55 Q70 43 78 55" stroke="#6a8aaa" strokeWidth="0.6" fill="none" opacity="0.4"/>
-            <path d="M55 55 Q72 40 82 55" stroke="#5a7a9a" strokeWidth="0.5" fill="none" opacity="0.3"/>
-            <path d="M55 55 Q74 37 86 55" stroke="#4a6a8a" strokeWidth="0.4" fill="none" opacity="0.2"/>
-          </svg>
+          <img
+            src="/logo.png"
+            alt="INTEGRA"
+            style={{
+              width: 90, height: 90,
+              objectFit: 'contain',
+              // Same filter used in the footer: turns dark navy logo pure white
+              filter: 'brightness(0) invert(1)',
+              opacity: 0.82,
+              position: 'relative', zIndex: 1,
+            }}
+          />
         </div>
 
         {/* Eyebrow */}
@@ -656,7 +657,7 @@ export default async function Home() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-              gap: 1, background: 'rgba(139,157,195,0.07)',
+              gap: 16,
             }}>
               {popularJournals.map((journal, i) => (
                 <Link
@@ -728,7 +729,7 @@ export default async function Home() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: 1, background: 'rgba(139,157,195,0.07)',
+            gap: 16,
           }}>
             {latestNews.map((item, i) => (
               <Link
