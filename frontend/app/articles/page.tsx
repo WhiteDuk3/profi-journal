@@ -490,7 +490,21 @@ export default async function ArticlesPage() {
           }
 
           // Initial reveal for rows already in viewport on page load
-          setTimeout(reveal, 200);
+          // Run immediately so rows in the viewport on load
+          // are never invisible-but-tappable
+          reveal();
+          // Also run after a short delay as a safety net for
+          // slow hydration on mobile
+          setTimeout(reveal, 300);
+          // Hard fallback — after 1 second, make everything visible
+          // regardless of scroll position, so nothing stays hidden
+          setTimeout(() => {
+            document.querySelectorAll('.a-row').forEach((el, i) => {
+              if (!el.classList.contains('in')) {
+                setTimeout(() => el.classList.add('in'), i * 80);
+              }
+            });
+          }, 1000);
         })();
       `}} />
     </div>
